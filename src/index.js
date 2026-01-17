@@ -1,15 +1,12 @@
-const express = require("express");
+const http = require("http");
 
-const app = express();
 const PORT = 3000;
 
-app.use(express.json());
-
-app.get("/health", (req, res) => {
-  res.send("OK");
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Blogify API is running!");
 });
 
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
