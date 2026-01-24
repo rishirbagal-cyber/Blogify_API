@@ -4,7 +4,15 @@ const getAllPosts = (req, res) => {
   });
 };
 
-module.exports = { getAllPosts };
+const getPostById = (req, res) => {
+  const postId = req.params.postId;
 
+  res.status(200).json({
+    message: `You requested Post ID: ${postId}`
+  });
+};
 
-// Assignment 2.5 feat: add post controller and refactor router to use controller
+module.exports = {
+  getAllPosts,
+  getPostById
+};
