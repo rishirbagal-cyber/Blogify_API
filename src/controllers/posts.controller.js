@@ -1,4 +1,10 @@
 const getAllPosts = (req, res) => {
+  const { sortBy } = req.query;
+
+  if (sortBy === "date") {
+    console.log("Sorting posts by date...");
+  }
+
   res.status(200).json({
     message: "Route handled by postController.getAllPosts"
   });
