@@ -1,25 +1,57 @@
-const express = require("express");
-const cors = require("cors");
+require('dotenv').config();
 
-const mainRouter = require("./routes");
-const errorHandler = require("./middleware/errorHandler");
-const requestLogger = require("./middleware/requestlogger");
+const express = require('express');
+const cors = require('cors');
+
+const { requestLogger, errorHandler } = require('./middleware');
+const mainRouter = require('./routes');
 
 const app = express();
+const port = process.env.PORT || 2350;
 
+// ---------------------------
 // Global Middleware
-app.use(cors());
+// ---------------------------
+
 app.use(express.json());
+app.use(cors());
 app.use(requestLogger);
 
-// Master Versioned Router
-app.use("/api/v1", mainRouter);
+// ---------------------------
+// Base Route
+// ---------------------------
 
-// Centralized Error Handler (ALWAYS LAST)
+app.get('/', (req, res) => {
+  res.send('Blogify API is running and it is working');
+});
+
+// ---------------------------
+// Versioned API Routes
+// ---------------------------
+
+app.use('/api/v1', mainRouter);
+
+// ---------------------------
+// 404 Handler
+// ---------------------------
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Route not found'
+  });
+});
+
+// ---------------------------
+// Central Error Handler (LAST)
+// ---------------------------
+
 app.use(errorHandler);
 
-const PORT = 5000;
+// ---------------------------
+// Start Server
+// ---------------------------
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running at port ${port}`);
 });
