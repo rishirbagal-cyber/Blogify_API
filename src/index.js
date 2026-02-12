@@ -1,58 +1,25 @@
-require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+
+const mainRouter = require("./routes");
+const errorHandler = require("./middleware/errorHandler");
+const requestLogger = require("./middleware/requestlogger");
+
 const app = express();
+
+// Global Middleware
+app.use(cors());
 app.use(express.json());
-const PORT = process.env.PORT || 8080;
+app.use(requestLogger);
 
-// --- Our Custom Middleware ---
-const requestLogger = (req, res, next) => {
-  console.log(`Request Received: ${req.method} ${req.originalUrl}`);
-  next();
-};
+// Master Versioned Router
+app.use("/api/v1", mainRouter);
 
-// --- Global Middleware Setup ---
-app.use(express.json());
-app.use(requestLogger); // We add our logger to the pipeline
-
-// --- Routes ---
-
-
-app.get('/about', (req, res) => {
-  res.send('About Page!');
-});
-
-const postRoutes = require("./routes/posts.routes");
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Blogify API is running 🚀");
-});
-
-// THE ERROR HANDLING MIDDLEWARE (MUST BE LAST!)
-const errorHandler = (err, req, res, next) => {
-  // 1. Log the error for the developer (on the server console)
-  console.error(err.stack); // Shows the full error details
-
-  // 2. Send a clean, generic JSON response to the client
-  res.status(500).json({
-    success: false,
-    error: 'Internal Server Error' 
-  });
-};
-app.get('/error-test', (req, res, next) => {
-  // We create a new Error object.
-  const myError = new Error('This is a deliberately thrown error!');
-  
-  // We pass it to next(), which sends it to our error handler.
-  next(myError);
-});
-
-// Mount it at the very end of the file
+// Centralized Error Handler (ALWAYS LAST)
 app.use(errorHandler);
 
-app.use("/api/v1/posts", postRoutes);   // attach router
+const PORT = 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
