@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const { requestLogger, errorHandler } = require('./middleware');
 const mainRouter = require('./routes');
+const connectDB = require('./config/db');
 
 const app = express();
 const port = process.env.PORT || 2350;
@@ -12,7 +13,7 @@ const port = process.env.PORT || 2350;
 // ---------------------------
 // Global Middleware
 // ---------------------------
-
+connectDB();
 app.use(express.json());
 app.use(cors());
 app.use(requestLogger);

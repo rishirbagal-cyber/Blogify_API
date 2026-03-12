@@ -6,20 +6,18 @@ const userController = require('../controllers/users.controller');
 
 // Validation Rules
 const registrationRules = [
+  body('name')
+    .notEmpty()
+    .withMessage('Name is required'),
+
   body('email')
     .isEmail()
     .withMessage('Please provide a valid email address'),
-
-  body('password')
-    .isLength({ min: 5 })
-    .withMessage('Password must be at least 5 characters long')
 ];
 
 // GET /api/v1/users
 router.get('/', (req, res) => {
-  res.json({
-    message: 'Users route is working'
-  });
+  res.json({ success: true, message: 'Users route is working' });
 });
 
 // POST /api/v1/users/register

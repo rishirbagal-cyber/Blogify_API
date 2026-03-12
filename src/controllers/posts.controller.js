@@ -1,66 +1,90 @@
-// GET ALL POSTS
-const getAllPosts = (req, res) => {
-  const { sortBy } = req.query;
+// src/controllers/posts.controller.js
+// Thin controller: delegates all DB work to postService.
+// Handles HTTP layer (req, res) only.
 
-  if (sortBy === "date") {
-    console.log("Sorting posts by date...");
+const postService = require('../services/posts.service');
+
+// GET ALL POSTS → GET /api/v1/posts
+const getAllPosts = async (req, res) => {
+  try {
+    const posts = await postService.getAllPosts();
+
+    res.status(200).json({
+      success: true,
+      results: posts.length,
+      data: posts,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
-
-  res.status(200).json({
-    success: true,
-    results: 0,
-    data: {
-      message: "All posts fetched successfully"
-    }
-  });
 };
 
-// GET SINGLE POST
-const getPostById = (req, res) => {
-  const { postId } = req.params;
+// GET SINGLE POST → GET /api/v1/posts/:postId
+const getPostById = async (req, res) => {
+  try {
+    const post = await postService.getPostById(req.params.postId);
 
-  res.status(200).json({
-    success: true,
-    data: {
-      postId,
-      message: `Post ${postId} fetched successfully`
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        error: `Post with id ${req.params.postId} not found`,
+      });
     }
-  });
+
+    res.status(200).json({ success: true, data: post });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
-// CREATE POST
-const createPost = (req, res) => {
-  res.status(201).json({
-    success: true,
-    data: {
-      message: "Post created successfully",
-      body: req.body
-    }
-  });
+// CREATE POST → POST /api/v1/posts
+const createPost = async (req, res) => {
+  try {
+    const post = await postService.createPost(req.body);
+
+    res.status(201).json({ success: true, data: post });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
-// UPDATE POST
-const updatePost = (req, res) => {
-  const { postId } = req.params;
+// UPDATE POST → PATCH /api/v1/posts/:postId
+const updatePost = async (req, res) => {
+  try {
+    const post = await postService.updatePost(req.params.postId, req.body);
 
-  res.status(200).json({
-    success: true,
-    data: {
-      message: `Post ${postId} updated successfully`
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        error: `Post with id ${req.params.postId} not found`,
+      });
     }
-  });
+
+    res.status(200).json({ success: true, data: post });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
-// DELETE POST
-const deletePost = (req, res) => {
-  const { postId } = req.params;
+// DELETE POST → DELETE /api/v1/posts/:postId
+const deletePost = async (req, res) => {
+  try {
+    const post = await postService.deletePost(req.params.postId);
 
-  res.status(200).json({
-    success: true,
-    data: {
-      message: `Post ${postId} deleted successfully`
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        error: `Post with id ${req.params.postId} not found`,
+      });
     }
-  });
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Post deleted successfully' },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
 module.exports = {
@@ -68,5 +92,5 @@ module.exports = {
   getPostById,
   createPost,
   updatePost,
-  deletePost
+  deletePost,
 };
