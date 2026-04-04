@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Blogify API Service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blogify_api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Use the service name 'db' as the hostname
+      DB_HOST: mongodb://db:27017/blogify_dev
+      JWT_SECRET: 958043c9ddc58a0b511e755113b5e9ef3f9ec6c1c660e44fcb5794251447503ba280382427764dd1149779c2ce9d3378ef5dc09d48da1b46434a893bcf2ea700
+      PORT: 3000
+    depends_on:
+      - db
+    volumes:
+      - ./src:/home/appuser/app/src
+
+  # MongoDB Database Service
+  db:
+    image: mongo:6
+    container_name: blogify_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: devuser
+      MONGO_INITDB_ROOT_PASSWORD: devpassword
+
+# Define named volumes for persistence
+volumes:
+  db-data:

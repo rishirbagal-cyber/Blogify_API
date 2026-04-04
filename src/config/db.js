@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI;
+    const mongoURI = process.env.DB_HOST || process.env.MONGO_URI;
 
     const conn = await mongoose.connect(mongoURI);
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`MongoDB Connected successfully`);
   } catch (error) {
     console.error(`Error connecting to MongoDB: ${error.message}`);
     process.exit(1);

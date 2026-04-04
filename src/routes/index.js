@@ -7,6 +7,8 @@ const router = express.Router();
 
 const usersRouter = require('./users.routes');
 const postsRouter = require('./posts.routes');
+const analyticsRouter = require('./analytics');
+const authRouter = require('./auth.routes.js');
 
 // ---------------------------
 // Utility / Base Routes
@@ -26,5 +28,7 @@ router.get('/error-test', (req, res, next) => {
 
 router.use('/users', usersRouter);
 router.use('/posts', postsRouter);
+router.use('/analytics', analyticsRouter);
+router.use('/auth', authRouter); // Mount at /api/v1/auth
 
 module.exports = router;
