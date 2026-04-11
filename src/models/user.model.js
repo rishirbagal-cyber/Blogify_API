@@ -5,12 +5,17 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      unique: true,
+      trim: true,
+    },
+    name: {
+      type: String,
       trim: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true, // Mongoose will create an index to enforce uniqueness
+      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -18,11 +23,22 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Method to compare passwords
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  const bcrypt = require('bcryptjs');
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 

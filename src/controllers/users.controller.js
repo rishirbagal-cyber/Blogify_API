@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/users.models');
+const User = require('../models/user.model');
 
 // Helper: generate JWT token
 const signToken = (id) => {
